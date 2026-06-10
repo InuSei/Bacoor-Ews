@@ -54,6 +54,7 @@
             <form method="POST" action="/logout" class="block mt-8">
                 @csrf
                 <button type="submit" class="w-full text-left flex items-center space-x-3 px-4 py-2.5 hover:bg-red-900/20 hover:text-red-400 rounded-md font-medium text-xs text-slate-400 transition-all">
+                    <img src="{{ asset('images/leave.png') }}" class="w-4 h-4 object-contain opacity-70" alt="Log Out">
                     <span>Log out</span>
                 </button>
             </form>
@@ -85,7 +86,7 @@
             
             <div class="col-span-12 lg:col-span-8 space-y-6">
                 
-                <div id="telemetryBanner" class="bg-[#D32F2F] text-white rounded-xl shadow-md border border-red-700 p-5 flex flex-col justify-center relative overflow-hidden min-h-[110px]">
+                <div id="telemetryBanner" class="bg-[#D32F2F] text-white rounded-xl shadow-md border border-red-700 p-5 flex flex-col justify-center relative overflow-hidden min-h-[110px] transition-colors">
                     <div class="flex justify-between items-start">
                         <div>
                             <h2 class="text-xl font-black uppercase tracking-tight">Alert Level</h2>
@@ -159,19 +160,19 @@
 
                 <div class="bg-white rounded-xl shadow-md border border-gray-300 p-5 space-y-4">
                     <div class="border-b border-gray-200 pb-2">
-                        <h4 class="text-xs font-black text-slate-900 uppercase tracking-wider">Flood waning Indicator</h4>
+                        <h4 class="text-xs font-black text-slate-900 uppercase tracking-wider">Flood Waning Indicator</h4>
                     </div>
                     <div class="grid grid-cols-3 gap-2 text-center">
                         <div class="p-3 bg-slate-50 rounded-lg border border-gray-200">
-                            <div id="lowGauge" class="w-12 h-12 rounded-full border-4 border-blue-500 flex items-center justify-center mx-auto text-xs font-black text-blue-700">--%</div>
+                            <div id="lowGauge" class="w-12 h-12 rounded-full border-4 border-blue-500 flex items-center justify-center mx-auto text-xs font-black text-blue-700 transition-all duration-500">--%</div>
                             <p class="text-[9px] font-bold text-gray-400 uppercase mt-2">Low</p>
                         </div>
                         <div class="p-3 bg-slate-50 rounded-lg border border-gray-200">
-                            <div id="modGauge" class="w-12 h-12 rounded-full border-4 border-amber-400 flex items-center justify-center mx-auto text-xs font-black text-amber-700">--%</div>
+                            <div id="modGauge" class="w-12 h-12 rounded-full border-4 border-amber-400 flex items-center justify-center mx-auto text-xs font-black text-amber-700 transition-all duration-500">--%</div>
                             <p class="text-[9px] font-bold text-gray-400 uppercase mt-2">Moderate</p>
                         </div>
                         <div class="p-3 bg-slate-50 rounded-lg border border-gray-200">
-                            <div id="critGauge" class="w-12 h-12 rounded-full border-4 border-red-500 flex items-center justify-center mx-auto text-xs font-black text-red-700">--%</div>
+                            <div id="critGauge" class="w-12 h-12 rounded-full border-4 border-red-500 flex items-center justify-center mx-auto text-xs font-black text-red-700 transition-all duration-500">--%</div>
                             <p class="text-[9px] font-bold text-gray-400 uppercase mt-2">Critical</p>
                         </div>
                     </div>
@@ -200,47 +201,29 @@
         }
 
         let mapInstance;
-        let nodeMarkers = {}; // Stores all 4 markers so we can change them individually
+        let nodeMarkers = {}; 
 
-        // The 4 ESP32 Node Coordinates
         const locationCoordinatesMatrix = {
             Talaba_II: { lat: 14.4622, lng: 120.9415 },
             Mambog_I:  { lat: 14.4530, lng: 120.9490 },
             Habay_I:   { lat: 14.4485, lng: 120.9365 },
-            Molino_I:  { lat: 14.4310, lng: 120.9520 }
+            Molino_I:  { lat: 14.4310, lng: 120.9520 },
+            NIOG_II_Bacoor_cavite: { lat: 14.4560, lng: 120.9450 } 
         };
 
-        // Standard Blue Icon (Safe)
-        const blueIcon = L.icon({
-            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
-            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-            iconSize: [25, 41],
-            iconAnchor: [12, 41],
-            popupAnchor: [1, -34],
-            shadowSize: [41, 41]
-        });
-
-        // Emergency Red Icon (Flooded)
-        const redIcon = L.icon({
-            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-            iconSize: [25, 41],
-            iconAnchor: [12, 41],
-            popupAnchor: [1, -34],
-            shadowSize: [41, 41]
-        });
+        const blueIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png', shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png', iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41] });
+        const greenIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png', shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png', iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41] });
+        const orangeIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png', shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png', iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41] });
+        const redIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png', shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png', iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41] });
 
         document.addEventListener("DOMContentLoaded", function() {
-            // Center the map covering all of Bacoor
             mapInstance = L.map('map').setView([14.4480, 120.9450], 13);
 
-            // Add the 100% Free OpenStreetMap Map Tiles
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
                 attribution: '© OpenStreetMap contributors'
             }).addTo(mapInstance);
 
-            // Plot ALL 4 ESP32 nodes simultaneously as Blue (Safe)
             for (const [key, coords] of Object.entries(locationCoordinatesMatrix)) {
                 let displayName = "Brgy. " + key.replace(/_/g, ' ');
                 nodeMarkers[key] = L.marker([coords.lat, coords.lng], { icon: blueIcon })
@@ -248,7 +231,6 @@
                     .addTo(mapInstance);
             }
 
-            // Start hardware polling
             synchronizeTelemetryState();
             setInterval(synchronizeTelemetryState, 4000);
         });
@@ -265,65 +247,94 @@
                     const logTime = data.timestamp ? new Date(data.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                     const displayLocation = data.location ? data.location : 'Brgy. Talaba II';
                     
-                    // Match database string to JS matrix key (e.g. "Brgy. Talaba II" -> "Talaba_II")
                     let locationKey = displayLocation.replace('Brgy. ', '').replace(/ /g, '_');
 
-                    if (data.is_flooding) {
-                        // 1. Alert Banner
+                    // Reset all markers to Blue first to clear old alerts
+                    for (const key in nodeMarkers) {
+                        nodeMarkers[key].setIcon(blueIcon);
+                        nodeMarkers[key].closePopup();
+                    }
+
+                    // 🌟 MULTI-STATE LOGIC UPGRADE 🌟
+                    if (data.warning_level === 'CRITICAL') {
                         banner.className = "bg-[#D32F2F] text-white rounded-xl shadow-md border border-red-700 p-5 flex flex-col justify-center relative overflow-hidden min-h-[110px] transition-colors";
-                        stateText.innerHTML = `LEVEL 1: CRITICAL MONITORING (ALERT ACTIVE IN ${displayLocation.toUpperCase()})`;
+                        stateText.innerHTML = `LEVEL 3: CRITICAL EMERGENCY (ALERT ACTIVE IN ${displayLocation.toUpperCase()})`;
                         
-                        // 2. Incident Table
                         rowTarget.innerHTML = `
                             <tr class="hover:bg-slate-400/10 transition-colors bg-red-500/10">
                                 <td class="px-6 py-2.5 border-r border-slate-400/20">${logTime}</td>
                                 <td class="px-6 py-2.5 border-r border-slate-400/20">${displayLocation}</td>
-                                <td class="px-6 py-2.5 border-r border-slate-400/20">Flooding</td>
-                                <td class="px-6 py-2.5 text-red-600 animate-pulse">Critical Alert</td>
+                                <td class="px-6 py-2.5 border-r border-slate-400/20 text-red-600 font-bold">Severe Flooding</td>
+                                <td class="px-6 py-2.5 text-red-600 font-black animate-pulse">CRITICAL Alert</td>
                             </tr>
                         `;
+                        activeMessages.innerHTML = `<div class="pt-2"><p class="text-red-500 text-[10px] mb-0.5">${logTime} Monitored</p> Critical flooding at ${displayLocation}! Dispatching rescue teams immediately.</div>`;
 
-                        // 3. Active Messages
-                        activeMessages.innerHTML = `
-                            <div class="pt-2"><p class="text-red-500 text-[10px] mb-0.5">${logTime} Monitored</p> Active flooding detected at ${displayLocation}! Dispatching rescue teams.</div>
-                        `;
-
-                        // 4. Update the Specific Pin on the Map to RED and open its popup!
                         if (nodeMarkers[locationKey]) {
                             nodeMarkers[locationKey].setIcon(redIcon);
                             nodeMarkers[locationKey].setPopupContent(`<b style="color:red;">🚨 CRITICAL FLOOD 🚨</b><br>${displayLocation}`).openPopup();
-                            // Optional: Automatically pan the map to the flooded node
                             mapInstance.panTo([locationCoordinatesMatrix[locationKey].lat, locationCoordinatesMatrix[locationKey].lng]);
                         }
+                        updateWaningIndicators(10, 15, 75);
 
-                        updateWaningIndicators(15, 25, 60);
+                    } else if (data.warning_level === 'MODERATE') {
+                        banner.className = "bg-[#EF6C00] text-white rounded-xl shadow-md border border-orange-700 p-5 flex flex-col justify-center relative overflow-hidden min-h-[110px] transition-colors";
+                        stateText.innerHTML = `LEVEL 2: MODERATE WARNING (ALERT ACTIVE IN ${displayLocation.toUpperCase()})`;
+                        
+                        rowTarget.innerHTML = `
+                            <tr class="hover:bg-slate-400/10 transition-colors bg-orange-500/10">
+                                <td class="px-6 py-2.5 border-r border-slate-400/20">${logTime}</td>
+                                <td class="px-6 py-2.5 border-r border-slate-400/20">${displayLocation}</td>
+                                <td class="px-6 py-2.5 border-r border-slate-400/20 text-orange-600 font-bold">Rising Water</td>
+                                <td class="px-6 py-2.5 text-orange-600 font-bold">MODERATE Alert</td>
+                            </tr>
+                        `;
+                        activeMessages.innerHTML = `<div class="pt-2"><p class="text-orange-500 text-[10px] mb-0.5">${logTime} Monitored</p> Moderate flooding at ${displayLocation}. Prepare for potential evacuation.</div>`;
+
+                        if (nodeMarkers[locationKey]) {
+                            nodeMarkers[locationKey].setIcon(orangeIcon);
+                            nodeMarkers[locationKey].setPopupContent(`<b style="color:orange;">⚠️ MODERATE FLOOD ⚠️</b><br>${displayLocation}`).openPopup();
+                            mapInstance.panTo([locationCoordinatesMatrix[locationKey].lat, locationCoordinatesMatrix[locationKey].lng]);
+                        }
+                        updateWaningIndicators(20, 60, 20);
+
+                    } else if (data.warning_level === 'LOW') {
+                        banner.className = "bg-[#F57F17] text-white rounded-xl shadow-md border border-yellow-700 p-5 flex flex-col justify-center relative overflow-hidden min-h-[110px] transition-colors";
+                        stateText.innerHTML = `LEVEL 1: LOW ADVISORY (ALERT ACTIVE IN ${displayLocation.toUpperCase()})`;
+                        
+                        rowTarget.innerHTML = `
+                            <tr class="hover:bg-slate-400/10 transition-colors bg-yellow-500/10">
+                                <td class="px-6 py-2.5 border-r border-slate-400/20">${logTime}</td>
+                                <td class="px-6 py-2.5 border-r border-slate-400/20">${displayLocation}</td>
+                                <td class="px-6 py-2.5 border-r border-slate-400/20 text-yellow-600 font-bold">Gutter Deep</td>
+                                <td class="px-6 py-2.5 text-yellow-600 font-bold">LOW Alert</td>
+                            </tr>
+                        `;
+                        activeMessages.innerHTML = `<div class="pt-2"><p class="text-yellow-500 text-[10px] mb-0.5">${logTime} Monitored</p> Low water accumulation at ${displayLocation}. Monitoring situation.</div>`;
+
+                        if (nodeMarkers[locationKey]) {
+                            nodeMarkers[locationKey].setIcon(greenIcon);
+                            nodeMarkers[locationKey].setPopupContent(`<b style="color:green;">🟢 LOW FLOOD 🟢</b><br>${displayLocation}`).openPopup();
+                            mapInstance.panTo([locationCoordinatesMatrix[locationKey].lat, locationCoordinatesMatrix[locationKey].lng]);
+                        }
+                        updateWaningIndicators(60, 30, 10);
+
                     } else {
-                        // 1. Safe Banner
+                        // SAFE
                         banner.className = "bg-[#2E7D32] text-white rounded-xl shadow-md border border-green-700 p-5 flex flex-col justify-center relative overflow-hidden min-h-[110px] transition-colors";
                         stateText.innerHTML = "LEVEL 0: NO FLOODING DETECTED (SYSTEM SECURE)";
                         
-                        // 2. Incident Table
                         rowTarget.innerHTML = `
                             <tr class="hover:bg-slate-400/10 transition-colors">
                                 <td class="px-6 py-2.5 border-r border-slate-400/20">${logTime}</td>
                                 <td class="px-6 py-2.5 border-r border-slate-400/20">${displayLocation}</td>
                                 <td class="px-6 py-2.5 border-r border-slate-400/20">None</td>
-                                <td class="px-6 py-2.5 text-green-600">Receded / Safe</td>
+                                <td class="px-6 py-2.5 text-green-600 font-bold">Receded / Safe</td>
                             </tr>
                         `;
+                        activeMessages.innerHTML = `<div class="pt-2"><p class="text-green-500 text-[10px] mb-0.5">${logTime} Monitored</p> Water level normal at ${displayLocation}. Status stable.</div>`;
 
-                        // 3. Active Messages
-                        activeMessages.innerHTML = `
-                            <div class="pt-2"><p class="text-green-500 text-[10px] mb-0.5">${logTime} Monitored</p> Water level normal at ${displayLocation}. Status stable.</div>
-                        `;
-
-                        // 4. Make sure all markers are blue when safe
-                        if (nodeMarkers[locationKey]) {
-                            nodeMarkers[locationKey].setIcon(blueIcon);
-                            nodeMarkers[locationKey].setPopupContent(`<b>Monitoring Node</b><br>${displayLocation}`);
-                            nodeMarkers[locationKey].closePopup();
-                        }
-
+                        // Markers are already reset to blue at the start of the function!
                         updateWaningIndicators(90, 10, 0);
                     }
                 })

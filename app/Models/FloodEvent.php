@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FloodEvent extends Model
 {
+    public $timestamps = false;
+    
     protected $fillable = [
         'location', // Swapped from barangay_id
         'warning_level',

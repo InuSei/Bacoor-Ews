@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('v1')->group(function () {
     // Public Intake Endpoint for the ESP32 Hardware (Keep this open)
     Route::post('/flood-events', [FloodEventController::class, 'store']);
+    Route::get('/flood-events/latest', [FloodEventController::class, 'latest']);
 
     // USER ACCOUNT SEARCH & OTP ENDPOINTS
     Route::post('/auth/find-account', [AuthController::class, 'findAccount']);
@@ -18,6 +19,6 @@ Route::prefix('v1')->group(function () {
     
     // Protected Presentation Layer Endpoints (Keep other protected items here if any)
     Route::middleware('auth:sanctum')->group(function () {
-        Route::get('/flood-events/latest', [FloodEventController::class, 'latest']);
+        // Any routes that REQUIRE a user to be logged in go here
     });
 });

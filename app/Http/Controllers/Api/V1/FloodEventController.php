@@ -55,4 +55,18 @@ class FloodEventController extends Controller
             'updated_at'    => $latestEvent->created_at ? $latestEvent->created_at->toIso8601String() : null
         ], 200);
     }
+
+    public function history(string $location): JsonResponse
+    {
+        $events = FloodEvent::where('location', $location)
+                    ->latest('id')
+                    ->limit(10)
+                    ->get();
+
+        return response()->json([
+            'status' => 'success',
+            'data'   => $events
+        ], 200);
+    }
+
 }

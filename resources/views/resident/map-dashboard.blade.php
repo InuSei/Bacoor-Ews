@@ -19,11 +19,9 @@
             height: 100%;
             overflow: hidden;
         }
-        /* Hides the text-directions box so we just see the clean red line */
         .leaflet-routing-container {
             display: none !important;
         }
-        /* Bumps the map zoom buttons up so they don't hide behind our new mobile button */
         .leaflet-control-zoom {
             margin-bottom: 80px !important; 
         }
@@ -64,13 +62,13 @@
                     </div>
                     
                     <div class="px-4 py-3 border-b border-gray-100">
-                        <p class="text-xs font-bold text-slate-800 truncate">{{ Auth::user()->full_name }}</p>
-                        <p class="text-[11px] font-semibold text-blue-600 truncate">{{ '@' . Auth::user()->username }}</p>
+                        <p class="text-xs font-bold text-slate-800 truncate">{{ Auth::user()->full_name ?? 'User' }}</p>
+                        <p class="text-[11px] font-semibold text-blue-600 truncate">{{ '@' . (Auth::user()->username ?? 'guest') }}</p>
                     </div>
 
                     <div class="p-1">
                         <a 
-                            href="{{ route('resident.logout') }}" 
+                            href="{{ route('resident.logout') ?? '#' }}" 
                             class="w-full text-left px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 rounded-lg flex items-center gap-2 transition-colors cursor-pointer text-decoration-none"
                         >
                             <img src="{{ asset('images/leave.png') }}" alt="Log Out" class="w-4 h-4 object-contain">
@@ -85,34 +83,46 @@
             <div class="p-2.5 bg-gray-50 border-b border-gray-100 text-[10px] font-black text-gray-400 uppercase tracking-wider">
                 Select Monitoring Station Node
             </div>
+            
             <ul class="divide-y divide-gray-100 font-bold text-xs text-slate-700">
-                <li onclick="simulateLocationSelect('Talaba_II')" class="px-4 py-3 hover:bg-blue-50 hover:text-blue-600 cursor-pointer flex justify-between items-center transition-colors">
+                <li onclick="simulateLocationSelect('Talaba_II', 'CRITICAL')" class="px-4 py-3 hover:bg-blue-50 hover:text-blue-600 cursor-pointer flex justify-between items-center transition-colors">
                     <div class="flex items-center gap-2">
                         <img src="{{ asset('images/people-roof.png') }}" alt="Barangay" class="w-4 h-4 object-contain opacity-75">
                         <span>Brgy. Talaba II</span>
                     </div>
-                    <span class="text-[10px] bg-red-100 text-red-600 px-2 py-0.5 rounded-sm uppercase font-black">Critical</span>
+                    <span id="badge-Talaba_II" class="text-[10px] bg-red-100 text-red-600 px-2 py-0.5 rounded-sm uppercase font-black">Critical</span>
                 </li>
-                <li onclick="simulateLocationSelect('Mambog_I')" class="px-4 py-3 hover:bg-blue-50 hover:text-blue-600 cursor-pointer flex justify-between items-center transition-colors">
+                
+                <li onclick="simulateLocationSelect('Mambog_I', 'MODERATE')" class="px-4 py-3 hover:bg-blue-50 hover:text-blue-600 cursor-pointer flex justify-between items-center transition-colors">
                     <div class="flex items-center gap-2">
                         <img src="{{ asset('images/people-roof.png') }}" alt="Barangay" class="w-4 h-4 object-contain opacity-75">
                         <span>Brgy. Mambog I</span>
                     </div>
-                    <span class="text-[10px] bg-orange-100 text-orange-600 px-2 py-0.5 rounded-sm uppercase font-black">Moderate</span>
+                    <span id="badge-Mambog_I" class="text-[10px] bg-orange-100 text-orange-600 px-2 py-0.5 rounded-sm uppercase font-black">Moderate</span>
                 </li>
-                <li onclick="simulateLocationSelect('Habay_I')" class="px-4 py-3 hover:bg-blue-50 hover:text-blue-600 cursor-pointer flex justify-between items-center transition-colors">
+                
+                <li onclick="simulateLocationSelect('Habay_I', 'MODERATE')" class="px-4 py-3 hover:bg-blue-50 hover:text-blue-600 cursor-pointer flex justify-between items-center transition-colors">
                     <div class="flex items-center gap-2">
                         <img src="{{ asset('images/people-roof.png') }}" alt="Barangay" class="w-4 h-4 object-contain opacity-75">
                         <span>Brgy. Habay I</span>
                     </div>
-                    <span class="text-[10px] bg-orange-100 text-orange-600 px-2 py-0.5 rounded-sm uppercase font-black">Moderate</span>
+                    <span id="badge-Habay_I" class="text-[10px] bg-orange-100 text-orange-600 px-2 py-0.5 rounded-sm uppercase font-black">Moderate</span>
                 </li>
-                <li onclick="simulateLocationSelect('Molino_I')" class="px-4 py-3 hover:bg-blue-50 hover:text-blue-600 cursor-pointer flex justify-between items-center transition-colors">
+                
+                <li onclick="simulateLocationSelect('Molino_I', 'LOW')" class="px-4 py-3 hover:bg-blue-50 hover:text-blue-600 cursor-pointer flex justify-between items-center transition-colors">
                     <div class="flex items-center gap-2">
                         <img src="{{ asset('images/people-roof.png') }}" alt="Barangay" class="w-4 h-4 object-contain opacity-75">
                         <span>Brgy. Molino I</span>
                     </div>
-                    <span class="text-[10px] bg-green-100 text-green-600 px-2 py-0.5 rounded-sm uppercase font-black">Low</span>
+                    <span id="badge-Molino_I" class="text-[10px] bg-green-100 text-green-600 px-2 py-0.5 rounded-sm uppercase font-black">Low</span>
+                </li>
+                
+                <li onclick="simulateLocationSelect('NIOG_II_Bacoor_cavite', 'SAFE')" class="px-4 py-3 hover:bg-blue-50 hover:text-blue-600 cursor-pointer flex justify-between items-center transition-colors">
+                    <div class="flex items-center gap-2">
+                        <img src="{{ asset('images/people-roof.png') }}" alt="Barangay" class="w-4 h-4 object-contain opacity-75">
+                        <span>Brgy. Niog II</span>
+                    </div>
+                    <span id="badge-NIOG_II_Bacoor_cavite" class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-sm uppercase font-black">Standby</span>
                 </li>
             </ul>
         </div>
@@ -182,10 +192,10 @@
             Talaba_II: { lat: 14.4622, lng: 120.9415 },
             Mambog_I:  { lat: 14.4530, lng: 120.9490 },
             Habay_I:   { lat: 14.4485, lng: 120.9365 },
-            Molino_I:  { lat: 14.4310, lng: 120.9520 }
+            Molino_I:  { lat: 14.4310, lng: 120.9520 },
+            NIOG_II_Bacoor_cavite: { lat: 14.4560, lng: 120.9450 }
         };
 
-        // 🌟 DYNAMIC ICONS: Colors for different warning levels
         const redIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png', shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png', iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41] });
         const orangeIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png', shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png', iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41] });
         const greenIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png', shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png', iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41] });
@@ -202,7 +212,6 @@
             initializeLiveHardwareStream();
         });
 
-        // --- MOBILE TOGGLE SCRIPTS ---
         function toggleMobileInfoCard() {
             const card = document.getElementById('bottomInfoCard');
             const btn = document.getElementById('mobileInfoToggleBtn');
@@ -220,7 +229,6 @@
             }
         }
 
-        // --- NAVIGATION SCRIPTS ---
         function toggleSearchDropdown(show) {
             const dropdown = document.getElementById('searchDropdownMenu');
             if (show) { dropdown.classList.remove('hidden'); closeUserDropdown(); } 
@@ -230,14 +238,39 @@
         function closeUserDropdown() { const m = document.getElementById('userProfileDropdownMenu'); if (m) m.classList.add('hidden'); }
         window.addEventListener('click', closeUserDropdown);
 
-        // --- 🌟 UPGRADED ROUTING ENGINE (Takes Dynamic Warning Level) ---
+        function updateDropdownBadge(locationKey, warningLevel) {
+            const badge = document.getElementById(`badge-${locationKey}`);
+            if (!badge) return;
+
+            if (warningLevel === 'CRITICAL') {
+                badge.className = "text-[10px] bg-red-100 text-red-600 px-2 py-0.5 rounded-sm uppercase font-black transition-colors";
+                badge.innerText = "CRITICAL";
+            } else if (warningLevel === 'MODERATE') {
+                badge.className = "text-[10px] bg-orange-100 text-orange-600 px-2 py-0.5 rounded-sm uppercase font-black transition-colors";
+                badge.innerText = "MODERATE";
+            } else if (warningLevel === 'LOW') {
+                badge.className = "text-[10px] bg-green-100 text-green-600 px-2 py-0.5 rounded-sm uppercase font-black transition-colors";
+                badge.innerText = "LOW";
+            } else {
+                badge.className = "text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-sm uppercase font-black transition-colors";
+                badge.innerText = "SAFE"; 
+            }
+        }
+
         function simulateLocationSelect(locationKey, warningLevel = 'CRITICAL') {
             const targetCoords = locationCoordinatesMatrix[locationKey];
             document.getElementById('mapSearchInput').value = "Brgy. " + locationKey.replace(/_/g, ' ');
             
+            updateDropdownBadge(locationKey, warningLevel);
+            
+            // 🌟 THE SAFE FIX IS HERE: Early Return! 🌟
+            if (warningLevel === 'SAFE') {
+                resetToBaselineView();
+                return; // Stop the function completely so it doesn't draw red lines
+            }
+            
             if (sensorMarker) map.removeLayer(sensorMarker);
 
-            // Dynamically select the pin color based on ESP32 warning level
             let activeIcon = redIcon;
             if (warningLevel === 'MODERATE') activeIcon = orangeIcon;
             if (warningLevel === 'LOW') activeIcon = greenIcon;
@@ -252,34 +285,26 @@
        function calculateRouteTrail(origin, destination, key, warningLevel = 'CRITICAL') {
             if (routingControl) map.removeControl(routingControl);
 
-            // Change primary route line color based on severity
-            let routeColor = '#D32F2F'; // Default Red
-            if (warningLevel === 'MODERATE') routeColor = '#EF6C00'; // Orange
-            if (warningLevel === 'LOW') routeColor = '#2E7D32'; // Green
+            let routeColor = '#D32F2F';
+            if (warningLevel === 'MODERATE') routeColor = '#EF6C00';
+            if (warningLevel === 'LOW') routeColor = '#2E7D32';
 
             routingControl = L.Routing.control({
                 waypoints: [ 
                     L.latLng(origin.lat, origin.lng), 
                     L.latLng(destination.lat, destination.lng) 
                 ],
-                
-                // Primary Route Styling
                 lineOptions: { 
                     styles: [{color: routeColor, opacity: 0.9, weight: 7}] 
                 },
-                
-                // 🌟 NEW: Command the API to find alternative backup routes!
                 showAlternatives: true,
-                
-                // 🌟 NEW: Style the backup routes so they look distinct (Gray and Dashed)
                 altLineOptions: {
                     styles: [
                         {color: '#4B5563', opacity: 0.6, weight: 5, dashArray: '10, 10'} 
                     ]
                 },
-
                 createMarker: function() { return null; }, 
-                show: false, // Keeps the text directions hidden for a clean map
+                show: false, 
                 addWaypoints: false, 
                 draggableWaypoints: false, 
                 fitSelectedRoutes: true 
@@ -287,13 +312,11 @@
 
             renderStatusHUDCard(key, warningLevel);
             
-            // Checks if it's running on the mobile version before sliding the menu up
             if (typeof forceOpenMobileInfoCard === "function") {
                 forceOpenMobileInfoCard();
             }
         }
 
-        // --- 🌟 UPGRADED HUD CARD (Listens to ESP32 Strings) ---
         function renderStatusHUDCard(key, warningLevel) {
             document.getElementById('defaultMenuSection').classList.add('hidden');
             document.getElementById('telemetryStatusOverlayCard').classList.remove('hidden');
@@ -330,18 +353,31 @@
             if(window.innerWidth < 768) { toggleMobileInfoCard(); }
         }
 
-        // --- 🌟 UPGRADED HARDWARE LISTENER ---
+        let lastKnownLocation = null;
+        let lastKnownLevel = null;
+
         function initializeLiveHardwareStream() {
             setInterval(() => {
                 fetch('/api/v1/flood-events/latest')
                     .then(res => res.json())
                     .then(data => {
-                        // Triggers ONLY if warning level is NOT safe
-                        if (data.warning_level && data.warning_level !== 'SAFE' && document.getElementById('mapSearchInput').value === "") {
+                        if (data.warning_level && data.warning_level !== 'SAFE') {
                             let locationKey = data.location.replace('Brgy. ', '').replace(/ /g, '_');    
+                            
                             if (locationCoordinatesMatrix[locationKey]) {
-                                simulateLocationSelect(locationKey, data.warning_level);
+                                // Only redraw the map if the level or location ACTUALLY changed
+                                if (lastKnownLocation !== locationKey || lastKnownLevel !== data.warning_level) {
+                                    lastKnownLocation = locationKey;
+                                    lastKnownLevel = data.warning_level;
+                                    
+                                    simulateLocationSelect(locationKey, data.warning_level);
+                                }
                             }
+                        } else if (data.warning_level === 'SAFE' && lastKnownLocation !== null) {
+                            // Automatically clear the map when the water recedes to SAFE
+                            lastKnownLocation = null;
+                            lastKnownLevel = 'SAFE';
+                            resetToBaselineView();
                         }
                     }).catch(e => console.log('Hardware sync skipped or offline.'));
             }, 4000);

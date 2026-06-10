@@ -16,6 +16,8 @@ Route::prefix('v1')->group(function () {
 
     // Auth Endpoint for Mobile Client/System Login
     Route::post('/auth/login', [AuthController::class, 'login']);
+
+    Route::get('/flood-events/history/{location}', [FloodEventController::class, 'history']);
     
     // Protected Presentation Layer Endpoints (Keep other protected items here if any)
     Route::middleware('auth:sanctum')->group(function () {

@@ -10,7 +10,7 @@ return new class extends Migration {
         Schema::create('flood_events', function (Blueprint $table) {
             $table->id();
             $table->string('location', 100)->nullable();
-            $table->string('warning_level', 20);
+            $table->string('water_level', 20);
             $table->boolean('alert_sent')->default(false);
             
             // Client's DB only has created_at (timestamp), no updated_at

@@ -14,16 +14,21 @@ class FloodEventController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        $request->merge([
+            'water_level' => $request->has('water_level') ? strtoupper(trim((string)$request->input('water_level'))) : null,
+            'location' => trim($request->location)
+        ]);
+
         // 1. Validate the incoming ESP32 payload
         $validated = $request->validate([
             'location'      => ['required', 'string', 'max:100'],
-            'warning_level' => ['required', 'string', 'in:CRITICAL,MODERATE,LOW,SAFE'],
+            'water_level' => ['required', 'string', 'in:CRITICAL,MODERATE,LOW,SAFE'],
         ]);
 
         // 2. Persist directly to the database
         $event = FloodEvent::create([
             'location'      => $validated['location'],
-            'warning_level' => $validated['warning_level'],
+            'water_level' => $validated['water_level'],
             'alert_sent'    => false
         ]);
 
@@ -44,14 +49,14 @@ class FloodEventController extends Controller
         if (!$latestEvent) {
             return response()->json([
                 'status'        => 'empty',
-                'warning_level' => 'SAFE',
+                'water_level' => 'SAFE',
             ], 200);
         }
 
         return response()->json([
             'status'        => 'success',
             'location'      => $latestEvent->location,
-            'warning_level' => $latestEvent->warning_level,
+            'water_level' => $latestEvent->water_level,
             'updated_at'    => $latestEvent->created_at ? $latestEvent->created_at->toIso8601String() : null
         ], 200);
     }

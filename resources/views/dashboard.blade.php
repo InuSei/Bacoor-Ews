@@ -6,7 +6,7 @@
     <title>CDRRMO Bacoor - Flood Monitoring System</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link class="w-4 h-4 object-contain brightness-0 invert" rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body class="bg-[#EAEAEA] min-h-screen font-sans flex text-gray-800 relative overflow-x-hidden">
@@ -244,7 +244,8 @@
                     const rowTarget = document.getElementById('telemetryEventTargetRows');
                     const activeMessages = document.getElementById('activeMessagesContainer');
                     
-                    const logTime = data.timestamp ? new Date(data.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    // 🌟 VARIABLE MATCH FIX: Maps cleanly to the controller's returned 'updated_at' property
+                    const logTime = data.updated_at ? new Date(data.updated_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                     const displayLocation = data.location ? data.location : 'Brgy. Talaba II';
                     
                     let locationKey = displayLocation.replace('Brgy. ', '').replace(/ /g, '_');
@@ -255,8 +256,8 @@
                         nodeMarkers[key].closePopup();
                     }
 
-                    // 🌟 MULTI-STATE LOGIC UPGRADE 🌟
-                    if (data.warning_level === 'CRITICAL') {
+                    // 🌟 NATIVE VARIABLE FIX: Listening explicitly for 'data.water_level' fields
+                    if (data.water_level === 'CRITICAL') {
                         banner.className = "bg-[#D32F2F] text-white rounded-xl shadow-md border border-red-700 p-5 flex flex-col justify-center relative overflow-hidden min-h-[110px] transition-colors";
                         stateText.innerHTML = `LEVEL 3: CRITICAL EMERGENCY (ALERT ACTIVE IN ${displayLocation.toUpperCase()})`;
                         
@@ -277,7 +278,7 @@
                         }
                         updateWaningIndicators(10, 15, 75);
 
-                    } else if (data.warning_level === 'MODERATE') {
+                    } else if (data.water_level === 'MODERATE') {
                         banner.className = "bg-[#EF6C00] text-white rounded-xl shadow-md border border-orange-700 p-5 flex flex-col justify-center relative overflow-hidden min-h-[110px] transition-colors";
                         stateText.innerHTML = `LEVEL 2: MODERATE WARNING (ALERT ACTIVE IN ${displayLocation.toUpperCase()})`;
                         
@@ -298,7 +299,7 @@
                         }
                         updateWaningIndicators(20, 60, 20);
 
-                    } else if (data.warning_level === 'LOW') {
+                    } else if (data.water_level === 'LOW') {
                         banner.className = "bg-[#F57F17] text-white rounded-xl shadow-md border border-yellow-700 p-5 flex flex-col justify-center relative overflow-hidden min-h-[110px] transition-colors";
                         stateText.innerHTML = `LEVEL 1: LOW ADVISORY (ALERT ACTIVE IN ${displayLocation.toUpperCase()})`;
                         
@@ -320,7 +321,7 @@
                         updateWaningIndicators(60, 30, 10);
 
                     } else {
-                        // SAFE
+                        // SAFE / NORMAL
                         banner.className = "bg-[#2E7D32] text-white rounded-xl shadow-md border border-green-700 p-5 flex flex-col justify-center relative overflow-hidden min-h-[110px] transition-colors";
                         stateText.innerHTML = "LEVEL 0: NO FLOODING DETECTED (SYSTEM SECURE)";
                         
@@ -334,7 +335,6 @@
                         `;
                         activeMessages.innerHTML = `<div class="pt-2"><p class="text-green-500 text-[10px] mb-0.5">${logTime} Monitored</p> Water level normal at ${displayLocation}. Status stable.</div>`;
 
-                        // Markers are already reset to blue at the start of the function!
                         updateWaningIndicators(90, 10, 0);
                     }
                 })

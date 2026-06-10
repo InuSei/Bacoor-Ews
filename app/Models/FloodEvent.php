@@ -11,7 +11,7 @@ class FloodEvent extends Model
     
     protected $fillable = [
         'location', // Swapped from barangay_id
-        'warning_level',
+        'water_level',
         'alert_sent'
     ];
 

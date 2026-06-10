@@ -18,6 +18,6 @@ Route::prefix('v1')->group(function () {
     
     // Protected Presentation Layer Endpoints (Keep other protected items here if any)
     Route::middleware('auth:sanctum')->group(function () {
-        Route::get('/flood-events/latest', [FloodEventController::class, 'Latest']);
+        Route::get('/flood-events/latest', [FloodEventController::class, 'latest']);
     });
 });

@@ -244,11 +244,13 @@
                     const rowTarget = document.getElementById('telemetryEventTargetRows');
                     const activeMessages = document.getElementById('activeMessagesContainer');
                     
-                    // 🌟 VARIABLE MATCH FIX: Maps cleanly to the controller's returned 'updated_at' property
                     const logTime = data.updated_at ? new Date(data.updated_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                     const displayLocation = data.location ? data.location : 'Brgy. Talaba II';
                     
-                    let locationKey = displayLocation.replace('Brgy. ', '').replace(/ /g, '_');
+                    // 🌟 CASE-INSENSITIVE SMART LOOKUP
+                    let rawLocation = displayLocation;
+                    let cleanInput = rawLocation.replace(/^brgy\.\s*/i, '').replace(/ /g, '_').toLowerCase();
+                    let locationKey = Object.keys(locationCoordinatesMatrix).find(k => k.toLowerCase() === cleanInput) || 'Talaba_II';
 
                     // Reset all markers to Blue first to clear old alerts
                     for (const key in nodeMarkers) {
@@ -256,7 +258,6 @@
                         nodeMarkers[key].closePopup();
                     }
 
-                    // 🌟 NATIVE VARIABLE FIX: Listening explicitly for 'data.water_level' fields
                     if (data.water_level === 'CRITICAL') {
                         banner.className = "bg-[#D32F2F] text-white rounded-xl shadow-md border border-red-700 p-5 flex flex-col justify-center relative overflow-hidden min-h-[110px] transition-colors";
                         stateText.innerHTML = `LEVEL 3: CRITICAL EMERGENCY (ALERT ACTIVE IN ${displayLocation.toUpperCase()})`;
@@ -321,7 +322,7 @@
                         updateWaningIndicators(60, 30, 10);
 
                     } else {
-                        // SAFE / NORMAL
+                        // NORMAL / SAFE
                         banner.className = "bg-[#2E7D32] text-white rounded-xl shadow-md border border-green-700 p-5 flex flex-col justify-center relative overflow-hidden min-h-[110px] transition-colors";
                         stateText.innerHTML = "LEVEL 0: NO FLOODING DETECTED (SYSTEM SECURE)";
                         

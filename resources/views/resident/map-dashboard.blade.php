@@ -194,10 +194,13 @@
                 fetch('/api/v1/flood-events/latest')
                     .then(res => res.json())
                     .then(data => {
-                        // 🌟 LISTEN FOR THE NEW WATER_LEVEL FIELD
                         if (data.water_level && data.water_level !== 'SAFE') {
-                            let locationKey = data.location.replace('Brgy. ', '').replace(/ /g, '_');    
-                            if (locationCoordinatesMatrix[locationKey]) {
+                            // 🌟 CASE-INSENSITIVE SMART SEARCH
+                            let rawLocation = data.location || '';
+                            let cleanInput = rawLocation.replace(/^brgy\.\s*/i, '').replace(/ /g, '_').toLowerCase();
+                            let locationKey = Object.keys(locationCoordinatesMatrix).find(k => k.toLowerCase() === cleanInput);    
+                            
+                            if (locationKey) {
                                 if (lastKnownLocation !== locationKey || lastKnownLevel !== data.water_level) {
                                     lastKnownLocation = locationKey;
                                     lastKnownLevel = data.water_level;

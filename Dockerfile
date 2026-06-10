@@ -1,9 +1,13 @@
-# Use the official PHP Apache image
+# Use the official PHP 8.4 Apache image
 FROM php:8.4-apache
 
-# Install database drivers
-RUN apt-get update && apt-get install -y libpq-dev unzip
-RUN docker-php-ext-install pdo pdo_pgsql
+# Install system dependencies and MySQL drivers
+RUN apt-get update && apt-get install -y \
+    libpng-dev \
+    libzip-dev \
+    zip \
+    unzip \
+    && docker-php-ext-install pdo_mysql gd zip
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -13,6 +17,9 @@ WORKDIR /var/www/html
 
 # Copy all your Laravel files into the server
 COPY . .
+
+# IMPORTANT: Tell Laravel to use sqlite during the build to avoid DB connection errors
+ENV DB_CONNECTION=sqlite
 
 # Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader

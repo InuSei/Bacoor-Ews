@@ -160,25 +160,23 @@ class ResidentAuthController extends Controller
         ]);
 
         if ($method === 'phone') {
+            $cleanNumber = preg_replace('/[^0-9]/', '', $user->phone_number);
             $messageBody = "CDRRMO Bacoor: Your verification code is {$otp}. It expires in 5 minutes. Do not share this code.";
             
-            try {
-                Http::post('https://api.semaphore.co/api/v4/messages', [
-                    'apikey'  => env('SEMAPHORE_API_KEY'),
-                    'number'  => $user->phone_number,
-                    'message' => $messageBody,
-                ]);
-            } catch (\Exception $e) {
-                Log::error('SMS Dispatch Failed: ' . $e->getMessage());
-            }
+            // 🌟 PRESENTATION SAFETY NET: Local simulation logging to prevent Semaphore paywall crashes
+            \Illuminate\Support\Facades\Log::info("=== SMS SYSTEM FALLBACK (PRESENTATION MODE) ===");
+            \Illuminate\Support\Facades\Log::info("To: {$cleanNumber} | Payload Content: {$messageBody}");
         } else {
             try {
-                // 🌟 Natively triggers Mailtrap using your new class layout
-                \Illuminate\Support\Facades\Mail::to($user->email)
+                // 🌟 SENIOR DEV FIX: Explicitly target Resend's API driver wrapper natively
+                \Illuminate\Support\Facades\Mail::mailer('resend')
+                    ->to($user->email)
                     ->send(new \App\Mail\SendOtpMail($otp));
                     
+                \Illuminate\Support\Facades\Log::info("Resend API securely dispatched OTP layout to: " . $user->email);
+                    
             } catch (\Exception $e) {
-                Log::error('Email Dispatch Failed: ' . $e->getMessage());
+                \Illuminate\Support\Facades\Log::error('Resend API Transport Failure: ' . $e->getMessage());
             }
         }   
     }

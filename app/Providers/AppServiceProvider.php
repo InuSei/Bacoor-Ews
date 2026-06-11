@@ -13,6 +13,10 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        if (config('app.env') === 'production' || env('APP_ENV') === 'production') {
+            URL::forceScheme('https');
+        }
+        
         if (Schema::hasTable('users')) {
             if (!User::where('username', 'admin')->exists()) {
                 User::create([

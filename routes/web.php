@@ -46,6 +46,10 @@ Route::prefix('resident')->name('resident.')->group(function () {
     Route::get('/register', [ResidentAuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [ResidentAuthController::class, 'processRegister'])->name('register.post');
 
+    Route::get('/forgot-password', [ResidentAuthController::class, 'showFindAccount'])->name('forgot-password');
+    Route::get('/reset-password', [ResidentAuthController::class, 'showResetPassword'])->name('reset-password');
+    Route::post('/reset-password', [ResidentAuthController::class, 'processResetPassword'])->name('reset-password.post');
+
     Route::get('/map-dashboard', [ResidentAuthController::class, 'showUserMap'])->name('map-dashboard');
 });
 

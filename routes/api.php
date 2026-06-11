@@ -13,6 +13,7 @@ Route::prefix('v1')->group(function () {
     Route::post('/auth/find-account', [AuthController::class, 'findAccount']);
     Route::post('/auth/verify-otp', [AuthController::class, 'verifyOtp']);
     Route::post('/auth/register', [AuthController::class, 'register']);
+    Route::post('/auth/reset-password', [AuthController::class, 'resetPassword']);
 
     // Auth Endpoint for Mobile Client/System Login
     Route::post('/auth/login', [AuthController::class, 'login']);

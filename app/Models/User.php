@@ -20,6 +20,8 @@ class User extends Authenticatable
         'password',
         'role',
         'barangay',
+        'otp_code',
+        'otp_expires_at',
     ];
 
     protected $hidden = [
@@ -28,6 +30,7 @@ class User extends Authenticatable
 
     protected $casts = [
         'password' => 'hashed', // Auto-hashes plain-text inputs securely
+        'otp_expires_at' => 'datetime',
     ];
 
     public function barangay(): BelongsTo

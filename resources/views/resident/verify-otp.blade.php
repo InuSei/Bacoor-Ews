@@ -30,6 +30,7 @@
                 @csrf
                 
                 <input type="hidden" name="phone_number" value="{{ session('auth_phone') }}">
+                <input type="hidden" name="email" value="{{ session('auth_email') }}">
 
                 <div>
                     <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">One-Time Password</label>
@@ -77,7 +78,7 @@
             duration--;
             if (duration <= 0) {
                 clearInterval(intervalClock);
-                countdownLabelElement.innerHTML = `<button onclick="window.location.reload()" class="text-xs font-black text-blue-600 hover:underline bg-transparent border-none cursor-pointer uppercase tracking-wider">Resend OTP Code</button>`;
+                countdownLabelElement.innerHTML = `<button onclick=\"window.location.reload()\" class=\"text-xs font-black text-blue-600 hover:underline bg-transparent border-none cursor-pointer uppercase tracking-wider\">Resend OTP Code</button>`;
             } else {
                 timerSecondsElement.innerText = duration;
             }

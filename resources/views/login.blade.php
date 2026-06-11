@@ -53,7 +53,7 @@
                     </a>
                 </div>
                 <div class="text-right flex-1">
-                    <a href="#" class="font-semibold text-gray-500 hover:underline">Forgot password?</a>
+                    <a href="{{ route('resident.forgot-password') ?? '#' }}" class="font-semibold text-gray-500 hover:underline">Forgot password?</a>
                 </div>
             </div>
 
@@ -82,13 +82,11 @@
                 userTab.className = "flex-1 py-2.5 text-sm font-bold rounded-lg transition-all text-white bg-blue-600 shadow";
                 adminTab.className = "flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all text-gray-600 hover:text-gray-900";
                 
-                // Show the mobile option link if it is a resident login attempt
                 mobileLink.classList.remove('hidden');
             } else {
                 adminTab.className = "flex-1 py-2.5 text-sm font-bold rounded-lg transition-all text-white bg-blue-600 shadow";
                 userTab.className = "flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all text-gray-600 hover:text-gray-900";
                 
-                // Hide the mobile verification path for hardware admins
                 mobileLink.classList.add('hidden');
             }
         }

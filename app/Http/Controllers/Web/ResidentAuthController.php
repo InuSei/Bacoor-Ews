@@ -4,11 +4,12 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Mail\SendOtpMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class ResidentAuthController extends Controller
 {
@@ -164,21 +165,18 @@ class ResidentAuthController extends Controller
             $messageBody = "CDRRMO Bacoor: Your verification code is {$otp}. It expires in 5 minutes. Do not share this code.";
             
             // 🌟 PRESENTATION SAFETY NET: Local simulation logging to prevent Semaphore paywall crashes
-            \Illuminate\Support\Facades\Log::info("=== SMS SYSTEM FALLBACK (PRESENTATION MODE) ===");
-            \Illuminate\Support\Facades\Log::info("To: {$cleanNumber} | Payload Content: {$messageBody}");
-        } else {
-            try {
-                // 🌟 SENIOR DEV FIX: Explicitly target Resend's API driver wrapper natively
-                \Illuminate\Support\Facades\Mail::mailer('resend')
-                    ->to($user->email)
-                    ->send(new \App\Mail\SendOtpMail($otp));
-                    
-                \Illuminate\Support\Facades\Log::info("Resend API securely dispatched OTP layout to: " . $user->email);
-                    
-            } catch (\Exception $e) {
-                \Illuminate\Support\Facades\Log::error('Resend API Transport Failure: ' . $e->getMessage());
-            }
-        }   
+            Log::info("=== SMS SYSTEM FALLBACK (PRESENTATION MODE) ===");
+            Log::info("To: {$cleanNumber} | Payload Content: {$messageBody}");
+            return;
+        } 
+        
+        try {
+            // 🌟 DELEGATED RESPONSIBILITY: Controller simply tells Laravel to send the Mailable
+            Mail::to($user->email)->send(new SendOtpMail($otp));
+            Log::info("Native Laravel Mail safely dispatched OTP to: " . $user->email);
+        } catch (\Exception $e) {
+            Log::error('Mail Dispatch Failure: ' . $e->getMessage());
+        }
     }
 
     public function showVerifyOtp(Request $request)

@@ -14,18 +14,25 @@ class FloodEventController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        // 1. Initial string formatting and sanitization
         $request->merge([
             'water_level' => $request->has('water_level') ? strtoupper(trim((string)$request->input('water_level'))) : null,
             'location'    => $request->has('location') ? trim((string)$request->input('location')) : null
         ]);
 
-        // 1. Validate the incoming ESP32 payload
+        // 🌟 HARDWARE TRANSLATION LAYER: Check if the incoming payload string contains "NIOG" anywhere inside it
+        if ($request->has('location') && str_contains($request->input('location'), 'NIOG')) {
+            $request->merge(['location' => 'Mambog']);
+            \Illuminate\Support\Facades\Log::info("Hardware Alias Intercepted: Address containing 'NIOG' remapped to 'Mambog'.");
+        }
+
+        // 2. Validate the incoming payload configurations
         $validated = $request->validate([
             'location'    => ['required', 'string', 'max:100'],
             'water_level' => ['required', 'string', 'in:CRITICAL,MODERATE,LOW,SAFE'],
         ]);
 
-        // 2. Persist directly to the database
+        // 3. Persist cleanly directly to the database
         $event = FloodEvent::create([
             'location'    => $validated['location'],
             'water_level' => $validated['water_level'],
@@ -56,14 +63,20 @@ class FloodEventController extends Controller
         return response()->json([
             'status'      => 'success',
             'location'    => $latestEvent->location,
-            'water_level' => $latestEvent->water_level, // 🌟 FIXED: Changed from warning_level to water_level column
+            'water_level' => $latestEvent->water_level,
             'updated_at'  => $latestEvent->created_at ? $latestEvent->created_at->toIso8601String() : null
         ], 200);
     }
 
+    /**
+     * 📊 HISTORICAL LOGS: Fetch telemetry event data subsets for graph layers
+     */
     public function history(string $location): JsonResponse
     {
-        $events = FloodEvent::where('location', $location)
+        // Fallback catch if frontend queries historical components using the old legacy key name string
+        $searchLocation = ($location === 'NIOG') ? 'Mambog' : $location;
+
+        $events = FloodEvent::where('location', $searchLocation)
                     ->latest('id')
                     ->limit(10)
                     ->get();

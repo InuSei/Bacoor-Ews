@@ -203,12 +203,12 @@
         let mapInstance;
         let nodeMarkers = {}; 
 
+        // 🌟 FIXED: Kept exactly the 4 nodes you requested
         const locationCoordinatesMatrix = {
             Talaba_II: { lat: 14.4622, lng: 120.9415 },
             Mambog_I:  { lat: 14.4530, lng: 120.9490 },
             Habay_I:   { lat: 14.4485, lng: 120.9365 },
-            Molino_I:  { lat: 14.4310, lng: 120.9520 },
-            NIOG_II_Bacoor_cavite: { lat: 14.4560, lng: 120.9450 } 
+            Molino_I:  { lat: 14.4310, lng: 120.9520 }
         };
 
         const blueIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png', shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png', iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41] });
@@ -245,12 +245,21 @@
                     const activeMessages = document.getElementById('activeMessagesContainer');
                     
                     const logTime = data.updated_at ? new Date(data.updated_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                    const displayLocation = data.location ? data.location : 'Brgy. Talaba II';
                     
-                    // 🌟 CASE-INSENSITIVE SMART LOOKUP
-                    let rawLocation = displayLocation;
-                    let cleanInput = rawLocation.replace(/^brgy\.\s*/i, '').replace(/ /g, '_').toLowerCase();
-                    let locationKey = Object.keys(locationCoordinatesMatrix).find(k => k.toLowerCase() === cleanInput) || 'Talaba_II';
+                    // 🌟 1. Capture the raw string exactly as it lives in your database
+                    const rawDatabaseLocation = data.location ? data.location : 'Mambog';
+                    
+                    // 🌟 2. Map Routing Logic: Safely use the raw database string to match your map pins
+                    let cleanInput = rawDatabaseLocation.replace(/^brgy\.\s*/i, '').replace(/ /g, '_').toLowerCase();
+                    let locationKey = Object.keys(locationCoordinatesMatrix)
+                        .filter(k => k !== 'cdrrmo_hq') // Keeps HQ safe on the map dashboard
+                        .find(k => k.toLowerCase().includes(cleanInput)) || 'Mambog_I';
+
+                    // 🌟 3. Presentation Logic: Dress up the UI text string specifically for the panel!
+                    let displayLocation = rawDatabaseLocation;
+                    if (rawDatabaseLocation === 'Mambog') {
+                        displayLocation = 'Brgy. Mambog, Bacoor, Cavite';
+                    }
 
                     // Reset all markers to Blue first to clear old alerts
                     for (const key in nodeMarkers) {

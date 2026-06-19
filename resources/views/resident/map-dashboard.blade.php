@@ -52,23 +52,21 @@
             <ul class="divide-y divide-gray-100 font-bold text-xs text-slate-700">
                 <li onclick="simulateLocationSelect('Talaba_II', 'CRITICAL')" class="px-4 py-3 hover:bg-blue-50 hover:text-blue-600 cursor-pointer flex justify-between items-center transition-colors">
                     <div class="flex items-center gap-2"><img src="{{ asset('images/people-roof.png') }}" alt="Barangay" class="w-4 h-4 object-contain opacity-75"><span>Brgy. Talaba II</span></div>
-                    <span id="badge-Talaba_II" class="text-[10px] bg-red-100 text-red-600 px-2 py-0.5 rounded-sm uppercase font-black">Critical</span>
+                    <span id="badge-Talaba_II" class="text-[10px] bg-red-100 text-red-600 px-2 py-0.5 rounded-sm uppercase font-black">CRITICAL</span>
                 </li>
-                <li onclick="simulateLocationSelect('Mambog_I', 'MODERATE')" class="px-4 py-3 hover:bg-blue-50 hover:text-blue-600 cursor-pointer flex justify-between items-center transition-colors">
+                
+                <li onclick="simulateLocationSelect('Mambog_I', 'SAFE')" class="px-4 py-3 hover:bg-blue-50 hover:text-blue-600 cursor-pointer flex justify-between items-center transition-colors">
                     <div class="flex items-center gap-2"><img src="{{ asset('images/people-roof.png') }}" alt="Barangay" class="w-4 h-4 object-contain opacity-75"><span>Brgy. Mambog I</span></div>
-                    <span id="badge-Mambog_I" class="text-[10px] bg-orange-100 text-orange-600 px-2 py-0.5 rounded-sm uppercase font-black">Moderate</span>
+                    <span id="badge-Mambog_I" class="text-[10px] bg-green-100 text-green-600 px-2 py-0.5 rounded-sm uppercase font-black">SAFE</span>
                 </li>
+                
                 <li onclick="simulateLocationSelect('Habay_I', 'MODERATE')" class="px-4 py-3 hover:bg-blue-50 hover:text-blue-600 cursor-pointer flex justify-between items-center transition-colors">
                     <div class="flex items-center gap-2"><img src="{{ asset('images/people-roof.png') }}" alt="Barangay" class="w-4 h-4 object-contain opacity-75"><span>Brgy. Habay I</span></div>
-                    <span id="badge-Habay_I" class="text-[10px] bg-orange-100 text-orange-600 px-2 py-0.5 rounded-sm uppercase font-black">Moderate</span>
+                    <span id="badge-Habay_I" class="text-[10px] bg-orange-100 text-orange-600 px-2 py-0.5 rounded-sm uppercase font-black">MODERATE</span>
                 </li>
                 <li onclick="simulateLocationSelect('Molino_I', 'LOW')" class="px-4 py-3 hover:bg-blue-50 hover:text-blue-600 cursor-pointer flex justify-between items-center transition-colors">
                     <div class="flex items-center gap-2"><img src="{{ asset('images/people-roof.png') }}" alt="Barangay" class="w-4 h-4 object-contain opacity-75"><span>Brgy. Molino I</span></div>
-                    <span id="badge-Molino_I" class="text-[10px] bg-green-100 text-green-600 px-2 py-0.5 rounded-sm uppercase font-black">Low</span>
-                </li>
-                <li onclick="simulateLocationSelect('NIOG_II_Bacoor_cavite', 'SAFE')" class="px-4 py-3 hover:bg-blue-50 hover:text-blue-600 cursor-pointer flex justify-between items-center transition-colors">
-                    <div class="flex items-center gap-2"><img src="{{ asset('images/people-roof.png') }}" alt="Barangay" class="w-4 h-4 object-contain opacity-75"><span>Brgy. Niog II</span></div>
-                    <span id="badge-NIOG_II_Bacoor_cavite" class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-sm uppercase font-black">Standby</span>
+                    <span id="badge-Molino_I" class="text-[10px] bg-green-100 text-green-600 px-2 py-0.5 rounded-sm uppercase font-black">LOW</span>
                 </li>
             </ul>
         </div>
@@ -110,16 +108,25 @@
 
     <script>
         let map, routingControl = null, sensorMarker = null;
-        const locationCoordinatesMatrix = { cdrrmo_hq: { lat: 14.4314, lng: 120.9463 }, Talaba_II: { lat: 14.4622, lng: 120.9415 }, Mambog_I: { lat: 14.4530, lng: 120.9490 }, Habay_I: { lat: 14.4485, lng: 120.9365 }, Molino_I: { lat: 14.4310, lng: 120.9520 }, NIOG_II_Bacoor_cavite: { lat: 14.4560, lng: 120.9450 } };
+        let isManualPresentation = false; 
+        
+        const hqCoords = { lat: 14.4314, lng: 120.9463 };
+        const locationCoordinatesMatrix = { 
+            Talaba_II: { lat: 14.4622, lng: 120.9415 }, 
+            Mambog_I:  { lat: 14.4530, lng: 120.9490 }, 
+            Habay_I:   { lat: 14.4485, lng: 120.9365 }, 
+            Molino_I:  { lat: 14.4310, lng: 120.9520 }
+        };
+        
         const redIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png', shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png', iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41] });
         const orangeIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png', shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png', iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41] });
         const greenIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png', shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png', iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41] });
 
         document.addEventListener("DOMContentLoaded", function() {
-            map = L.map('userLiveGpsMap', {zoomControl: false}).setView([locationCoordinatesMatrix.cdrrmo_hq.lat, locationCoordinatesMatrix.cdrrmo_hq.lng], 14);
+            map = L.map('userLiveGpsMap', {zoomControl: false}).setView([hqCoords.lat, hqCoords.lng], 14);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
             L.control.zoom({ position: 'bottomright' }).addTo(map);
-            L.marker([locationCoordinatesMatrix.cdrrmo_hq.lat, locationCoordinatesMatrix.cdrrmo_hq.lng]).bindPopup("<b>CDRRMO Headquarters</b>").addTo(map);
+            L.marker([hqCoords.lat, hqCoords.lng]).bindPopup("<b>CDRRMO Headquarters</b>").addTo(map);
             map.on('click', function() { toggleSearchDropdown(false); closeUserDropdown(); });
             initializeLiveHardwareStream();
         });
@@ -135,28 +142,45 @@
             if (level === 'CRITICAL') { badge.className = "text-[10px] bg-red-100 text-red-600 px-2 py-0.5 rounded-sm uppercase font-black"; badge.innerText = "CRITICAL"; }
             else if (level === 'MODERATE') { badge.className = "text-[10px] bg-orange-100 text-orange-600 px-2 py-0.5 rounded-sm uppercase font-black"; badge.innerText = "MODERATE"; }
             else if (level === 'LOW') { badge.className = "text-[10px] bg-green-100 text-green-600 px-2 py-0.5 rounded-sm uppercase font-black"; badge.innerText = "LOW"; }
-            else { badge.className = "text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-sm uppercase font-black"; badge.innerText = "SAFE"; }
+            else { badge.className = "text-[10px] bg-green-100 text-green-600 px-2 py-0.5 rounded-sm uppercase font-black"; badge.innerText = "SAFE"; }
         }
 
         function simulateLocationSelect(locationKey, level = 'CRITICAL') {
+            isManualPresentation = true; 
             const targetCoords = locationCoordinatesMatrix[locationKey];
             document.getElementById('mapSearchInput').value = "Brgy. " + locationKey.replace(/_/g, ' ');
             updateDropdownBadge(locationKey, level);
-            if (level === 'SAFE') { resetToBaselineView(); return; }
+            
+            // 🌟 FIXED: No longer wipes the map on SAFE. It now proceeds to drop the green pin!
             if (sensorMarker) map.removeLayer(sensorMarker);
-            let activeIcon = redIcon; if (level === 'MODERATE') activeIcon = orangeIcon; if (level === 'LOW') activeIcon = greenIcon;
-            sensorMarker = L.marker([targetCoords.lat, targetCoords.lng], {icon: activeIcon}).bindPopup(`<b>${level} ALERT</b><br>ESP32 Node: ` + locationKey.replace(/_/g, ' ')).addTo(map).openPopup();
-            calculateRouteTrail(locationCoordinatesMatrix.cdrrmo_hq, targetCoords, locationKey, level);
+            
+            let activeIcon = redIcon; 
+            if (level === 'MODERATE') activeIcon = orangeIcon; 
+            if (level === 'LOW' || level === 'SAFE') activeIcon = greenIcon;
+            
+            sensorMarker = L.marker([targetCoords.lat, targetCoords.lng], {icon: activeIcon}).bindPopup(`<b>${level === 'SAFE' ? 'ALL CLEAR' : level + ' ALERT'}</b><br>ESP32 Node: ` + locationKey.replace(/_/g, ' ')).addTo(map).openPopup();
+            
+            calculateRouteTrail(hqCoords, targetCoords, locationKey, level);
         }
 
         function calculateRouteTrail(origin, destination, key, level = 'CRITICAL') {
-            if (routingControl) map.removeControl(routingControl);
-            let routeColor = level === 'MODERATE' ? '#EF6C00' : (level === 'LOW' ? '#2E7D32' : '#D32F2F');
-            routingControl = L.Routing.control({
-                waypoints: [ L.latLng(origin.lat, origin.lng), L.latLng(destination.lat, destination.lng) ],
-                lineOptions: { styles: [{color: routeColor, opacity: 0.9, weight: 7}] },
-                createMarker: function() { return null; }, show: false, fitSelectedRoutes: true
-            }).addTo(map);
+            if (routingControl) {
+                map.removeControl(routingControl); 
+                routingControl = null;
+            }
+            
+            // 🌟 FIXED: Only draw an emergency route if it is actually flooding. If SAFE, just pan the map.
+            if (level !== 'SAFE') {
+                let routeColor = level === 'MODERATE' ? '#EF6C00' : (level === 'LOW' ? '#2E7D32' : '#D32F2F');
+                routingControl = L.Routing.control({
+                    waypoints: [ L.latLng(origin.lat, origin.lng), L.latLng(destination.lat, destination.lng) ],
+                    lineOptions: { styles: [{color: routeColor, opacity: 0.9, weight: 7}] },
+                    createMarker: function() { return null; }, show: false, fitSelectedRoutes: true
+                }).addTo(map);
+            } else {
+                map.setView([destination.lat, destination.lng], 15);
+            }
+
             renderStatusHUDCard(key, level);
             if (typeof forceOpenMobileInfoCard === "function") forceOpenMobileInfoCard();
         }
@@ -165,25 +189,66 @@
             document.getElementById('defaultMenuSection').classList.add('hidden');
             document.getElementById('telemetryStatusOverlayCard').classList.remove('hidden');
             document.getElementById('targetBarangayLabel').innerText = key.replace(/_/g, ' ').toUpperCase();
+            
             const badgeBlock = document.getElementById('badgeAlertIndicatorBlock');
             const instructionText = document.getElementById('evacuationInstructionLabelText');
+            
             if (level === 'CRITICAL') {
-                badgeBlock.className = "inline-block mt-1 px-3 py-1 text-[10px] font-black text-white bg-[#D32F2F] border border-red-700 rounded shadow-2xs"; badgeBlock.innerText = "CRITICAL ALERT";
-                instructionText.innerText = "Evacuate immediately! Marked tracking pathways unpassable due to flash floods.";
+                badgeBlock.className = "inline-block mt-1 px-3 py-1 text-[10px] font-black text-white bg-[#D32F2F] border border-red-700 rounded shadow-2xs"; 
+                badgeBlock.innerText = "CRITICAL ALERT";
+                instructionText.className = "text-xs font-medium text-slate-600 leading-relaxed border-l-4 border-red-500 pl-3 bg-red-50/50 py-2.5 rounded-r-xl block";
+                instructionText.innerHTML = `
+                    <span class="text-red-700 font-black text-sm block mb-1">ALERT LEVEL 3</span>
+                    <span class="block"><b>Residents:</b> EVACUATE NOW.</span>
+                    <span class="block mt-1"><b>Commuters:</b> NOT PASSABLE. Road closed to all vehicles.</span>
+                `;
             } else if (level === 'MODERATE') {
-                badgeBlock.className = "inline-block mt-1 px-3 py-1 text-[10px] font-black text-white bg-[#EF6C00] border border-orange-700 rounded shadow-2xs"; badgeBlock.innerText = "MODERATE ALERT";
-                instructionText.innerText = "Be careful! Flooding reported on low-lying curbs. Avoid deep drainage channels.";
+                badgeBlock.className = "inline-block mt-1 px-3 py-1 text-[10px] font-black text-white bg-[#EF6C00] border border-orange-700 rounded shadow-2xs"; 
+                badgeBlock.innerText = "MODERATE ALERT";
+                instructionText.className = "text-xs font-medium text-slate-600 leading-relaxed border-l-4 border-orange-500 pl-3 bg-orange-50/50 py-2.5 rounded-r-xl block";
+                instructionText.innerHTML = `
+                    <span class="text-orange-700 font-black text-sm block mb-1">ALERT LEVEL 2</span>
+                    <span class="block"><b>Residents:</b> Prepare go bag & evacuation plan.</span>
+                    <span class="block mt-1"><b>Commuters:</b> LIMITED ACCESS. Only large vehicles are allowed.</span>
+                `;
+            } else if (level === 'LOW') {
+                badgeBlock.className = "inline-block mt-1 px-3 py-1 text-[10px] font-black text-white bg-[#2E7D32] border border-green-700 rounded shadow-2xs"; 
+                badgeBlock.innerText = "LOW WARNING";
+                instructionText.className = "text-xs font-medium text-slate-600 leading-relaxed border-l-4 border-green-500 pl-3 bg-green-50/50 py-2.5 rounded-r-xl block";
+                instructionText.innerHTML = `
+                    <span class="text-green-700 font-black text-sm block mb-1">ALERT LEVEL 1</span>
+                    <span class="block"><b>Residents:</b> Stay alert & monitor updates.</span>
+                    <span class="block mt-1"><b>Commuters:</b> PASSABLE. All vehicles allowed. Drive carefully.</span>
+                `;
             } else {
-                badgeBlock.className = "inline-block mt-1 px-3 py-1 text-[10px] font-black text-white bg-[#2E7D32] border border-green-700 rounded shadow-2xs"; badgeBlock.innerText = "LOW WARNING";
-                instructionText.innerText = "Monitor rainfall patterns closely. Waterways running normally. Clear clearways.";
+                // 🌟 FIXED: New presentation block for the SAFE payload!
+                badgeBlock.className = "inline-block mt-1 px-3 py-1 text-[10px] font-black text-white bg-[#15803d] border border-green-800 rounded shadow-2xs"; 
+                badgeBlock.innerText = "STATUS: SAFE";
+                instructionText.className = "text-xs font-medium text-slate-600 leading-relaxed border-l-4 border-green-600 pl-3 bg-green-50/50 py-2.5 rounded-r-xl block";
+                instructionText.innerHTML = `
+                    <span class="text-green-800 font-black text-sm block mb-1">ALL CLEAR</span>
+                    <span class="block"><b>Residents:</b> Water levels are normal. No flooding detected.</span>
+                    <span class="block mt-1"><b>Commuters:</b> PASSABLE. Roads are completely clear.</span>
+                `;
             }
         }
 
+        // 🌟 The map will now ONLY reset when you explicitly click "Clear Map ✖"
         function resetToBaselineView() {
-            document.getElementById('defaultMenuSection').classList.remove('hidden'); document.getElementById('telemetryStatusOverlayCard').classList.add('hidden'); document.getElementById('mapSearchInput').value = "";
+            isManualPresentation = false; 
+            document.getElementById('defaultMenuSection').classList.remove('hidden'); 
+            document.getElementById('telemetryStatusOverlayCard').classList.add('hidden'); 
+            document.getElementById('mapSearchInput').value = "";
+            
             if (routingControl) { map.removeControl(routingControl); routingControl = null; }
             if (sensorMarker) { map.removeLayer(sensorMarker); sensorMarker = null; }
-            map.setView([locationCoordinatesMatrix.cdrrmo_hq.lat, locationCoordinatesMatrix.cdrrmo_hq.lng], 14);
+            map.setView([hqCoords.lat, hqCoords.lng], 14);
+            
+            updateDropdownBadge('Talaba_II', 'CRITICAL');
+            updateDropdownBadge('Habay_I', 'MODERATE');
+            updateDropdownBadge('Molino_I', 'LOW');
+            updateDropdownBadge('Mambog_I', 'SAFE');
+
             if(window.innerWidth < 768) toggleMobileInfoCard();
         }
 
@@ -194,22 +259,21 @@
                 fetch('/api/v1/flood-events/latest')
                     .then(res => res.json())
                     .then(data => {
-                        if (data.water_level && data.water_level !== 'SAFE') {
-                            // 🌟 CASE-INSENSITIVE SMART SEARCH
-                            let rawLocation = data.location || '';
-                            let cleanInput = rawLocation.replace(/^brgy\.\s*/i, '').replace(/ /g, '_').toLowerCase();
-                            let locationKey = Object.keys(locationCoordinatesMatrix).find(k => k.toLowerCase() === cleanInput);    
-                            
-                            if (locationKey) {
-                                if (lastKnownLocation !== locationKey || lastKnownLevel !== data.water_level) {
-                                    lastKnownLocation = locationKey;
-                                    lastKnownLevel = data.water_level;
-                                    simulateLocationSelect(locationKey, data.water_level);
-                                }
-                            }
-                        } else if (data.water_level === 'SAFE' && lastKnownLocation !== null) {
-                            lastKnownLocation = null; lastKnownLevel = 'SAFE'; resetToBaselineView();
+                        let currentLevel = data.water_level ? data.water_level.toUpperCase() : 'SAFE';
+                        let rawLocation = data.location || 'Mambog_I';
+                        let cleanInput = rawLocation.replace(/^brgy\.\s*/i, '').replace(/ /g, '_').toLowerCase();
+                        
+                        // Fallback mapping lock to Mambog_I if string matching acts up
+                        let locationKey = Object.keys(locationCoordinatesMatrix).find(k => k.toLowerCase().includes(cleanInput)) || 'Mambog_I';    
+                        
+                        // 🌟 FIXED: Processes EVERY level exactly the same way, including 'SAFE'
+                        if (lastKnownLocation !== locationKey || lastKnownLevel !== currentLevel) {
+                            lastKnownLocation = locationKey;
+                            lastKnownLevel = currentLevel;
+                            isManualPresentation = false;
+                            simulateLocationSelect(locationKey, currentLevel);
                         }
+                        
                     }).catch(e => console.log('Hardware offline.'));
             }, 4000);
         }
